@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <div class="container">
+    <h1>💰 Expense Tracker</h1>
+
+    <div class="form">
+      <input type="number" id="amount" placeholder="Enter amount">
+      <input type="text" id="category" placeholder="type Category">
+
+      <input type="date" id="date">
+      <button id="addExpense">Add Expense</button>
+    </div>
+
+    <h2>Total: ₹ <span id="total">0</span></h2>
+
+    <label>Select Month</label>
+    <input type="month" id="monthFilter">
+
+    <h3>Monthly Total: ₹ <span id="monthlyTotal">0</span></h3>
+
+
+    <table>
+      <thead>
+        <tr>
+          <th>Amount</th>
+          <th>Category</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="expenseList"></tbody>
+    </table>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
