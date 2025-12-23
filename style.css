@@ -112,6 +112,14 @@ th, td {
    margin-top: 15px;
 }
 
+.in {
+   color: green; font-weight: 600; 
+  }
+.out { 
+  color: red; font-weight: 600; 
+}
+
+
 
 
 

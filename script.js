@@ -2,109 +2,133 @@ const amountInput = document.getElementById("amount");
 const categoryInput = document.getElementById("category");
 const dateInput = document.getElementById("date");
 const addBtn = document.getElementById("addExpense");
+
 const expenseList = document.getElementById("expenseList");
 const totalEl = document.getElementById("total");
+
 const monthFilter = document.getElementById("monthFilter");
 const monthlyTotalEl = document.getElementById("monthlyTotal");
 
+const budgetInput = document.getElementById("budgetInput");
+const saveBudgetBtn = document.getElementById("saveBudget");
+const totalInEl = document.getElementById("totalIn");
+const totalOutEl = document.getElementById("totalOut");
+const balanceEl = document.getElementById("balance");
 
-let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-let editIndex = null;
+let expenses = [];
+let total = 0;
+let budget = 0;
 
+// Load saved budget from localStorage
+if (localStorage.getItem("budget")) {
+  budget = Number(localStorage.getItem("budget"));
+  budgetInput.value = budget;
+}
 
-// Load existing expenses
-renderExpenses();
+// Save budget manually
+saveBudgetBtn.addEventListener("click", () => {
+  const input = Number(budgetInput.value);
+  if (!input || input < 0) {
+    alert("Baby, valid budget daalo 😜");
+    return;
+  }
+  budget = input;
+  localStorage.setItem("budget", budget);
+  updateSummary();
+});
 
+// ➕➖ Add Expense
 addBtn.addEventListener("click", () => {
-  const amount = amountInput.value;
+  const amount = Number(amountInput.value);
   const category = categoryInput.value;
   const date = dateInput.value;
+  const type = document.querySelector('input[name="type"]:checked').value;
 
-  if (!amount || !category || !date) return;
-
-    if (editIndex === null) {
-      expenses.push({ amount: Number(amount), category, date });
-  } else {
-    expenses[editIndex] = { amount: Number(amount), category, date };
-    editIndex = null;
-    addBtn.textContent = "Add Expense";
+  if (!amount || !category || !date) {
+    alert("Oops! fill all the fields 😜");
+    return;
   }
 
-  localStorage.setItem("expenses", JSON.stringify(expenses));
+  const finalAmount = type === "in" ? amount : -amount;
+
+  const expense = {
+    amount,
+    finalAmount,
+    category,
+    date,
+    type
+  };
+
+  expenses.push(expense);
+  total += finalAmount;
+
+  updateTotal();
   renderExpenses();
-  clearInputs();
-});
+  updateMonthlyTotal();
 
-monthFilter.addEventListener("change", () => {
-  calculateMonthlyTotal(monthFilter.value);
-});
-
-
-function renderExpenses() {
-  expenseList.innerHTML = "";
-  let total = 0;
-
-  expenses.forEach((expense, index) => {
-    total += expense.amount;
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>₹${expense.amount}</td>
-      <td>${expense.category}</td>
-      <td>${expense.date}</td>
-      <td>
-        <button onclick="editExpense(${index})">Edit</button>
-        <button class="delete-btn" onclick="deleteExpense(${index})">Delete</button>
-      </td>
-    `;
-
-    expenseList.appendChild(row);
-
-  });
-
-  totalEl.textContent = total;
-}
-
-function editExpense(index) {
-  const expense = expenses[index];
-
-  amountInput.value = expense.amount;
-  categoryInput.value = expense.category;
-  dateInput.value = expense.date;
-
-  editIndex = index;
-  addBtn.textContent = "Update Expense";
-}
-
-
-function deleteExpense(index) {
-  expenses.splice(index, 1);
-  localStorage.setItem("expenses", JSON.stringify(expenses));
-  renderExpenses();
-}
-
-function clearInputs() {
   amountInput.value = "";
   categoryInput.value = "";
   dateInput.value = "";
+});
+
+// 🔄 Render Table
+function renderExpenses() {
+  expenseList.innerHTML = "";
+
+  expenses.forEach((exp, index) => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td class="${exp.type}">
+        ${exp.type === "in" ? "+" : "-"}₹${exp.amount}
+      </td>
+      <td>${exp.category}</td>
+      <td>${exp.date}</td>
+      <td>
+        <button class="delete">❌</button>
+      </td>
+    `;
+
+    tr.querySelector(".delete").addEventListener("click", () => {
+      total -= exp.finalAmount;
+      expenses.splice(index, 1);
+      updateTotal();
+      renderExpenses();
+      updateMonthlyTotal();
+    });
+
+    expenseList.appendChild(tr);
+  });
 }
 
-function calculateMonthlyTotal(selectedMonth) {
-  let total = 0;
+// 💰 Update Total Balance
+function updateTotal() {
+  totalEl.innerText = total;
+}
+
+// 💎 Update Summary (Total IN / OUT / Balance)
+function updateSummary() {
+  const totalIn = expenses.filter(e => e.type === "in").reduce((sum, e) => sum + e.amount, 0);
+  const totalOut = expenses.filter(e => e.type === "out").reduce((sum, e) => sum + e.amount, 0);
+  const balance = budget + totalIn - totalOut;
+
+  totalInEl.innerText = totalIn;
+  totalOutEl.innerText = totalOut;
+  balanceEl.innerText = balance;
+}
+
+// 📅 Monthly Total
+monthFilter.addEventListener("change", updateMonthlyTotal);
+
+function updateMonthlyTotal() {
+  const selectedMonth = monthFilter.value;
+  let monthlyTotal = 0;
 
   expenses.forEach(exp => {
-    const expMonth = exp.date.slice(0, 7); // yyyy-mm
-
-    if (expMonth === selectedMonth) {
-      total += exp.amount;
+    if (exp.date.startsWith(selectedMonth)) {
+      monthlyTotal += exp.finalAmount;
     }
   });
 
-  monthlyTotalEl.textContent = total;
+  monthlyTotalEl.innerText = monthlyTotal;
 }
-
-
-
-
-
-

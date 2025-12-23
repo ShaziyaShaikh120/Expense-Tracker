@@ -18,6 +18,27 @@
       <input type="text" id="category" placeholder="type Category">
 
       <input type="date" id="date">
+
+      <div class="type">
+    <label>
+     <input type="radio" name="type" value="in" checked> + IN
+    </label>
+    <label>
+     <input type="radio" name="type" value="out"> - OUT
+    </label>
+    </div>
+
+    <div class="budget-section">
+  <h3>Set Your Budget: ₹ 
+    <input type="number" id="budgetInput" placeholder="Enter budget">
+    <button id="saveBudget">Save</button>
+  </h3>
+
+  <h3>Total IN: ₹ <span id="totalIn">0</span></h3>
+  <h3>Total OUT: ₹ <span id="totalOut">0</span></h3>
+  <h3>Balance: ₹ <span id="balance">0</span></h3>
+</div>
+
       <button id="addExpense">Add Expense</button>
     </div>
 
