@@ -14,15 +14,13 @@ body {
   padding: 50px;
 }
 
-.container {
-  height: 80vh;           /* Full screen height */
-  width: 100vw; 
+.container {          /* Full screen height */
   display: flex;  
   flex-direction: column;
   justify-content:flex-start;
   max-width: 800px;
   background: #ffffff;
-  padding: 20px;
+  padding: 15px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
@@ -30,6 +28,12 @@ body {
 h1 {
   text-align: center;
   margin-bottom: 20px;
+  font-size: 22px;
+}
+
+h3 {
+  text-align: left;
+  font-size: 18px;
 }
 
 h2 {
@@ -38,6 +42,8 @@ h2 {
   border-radius: 10px;
   text-align: center;
   margin-top: 15px;
+  font-size: 18px;
+
 }
 
 .form {
@@ -73,9 +79,11 @@ button:hover {
 table {
   width: 100%;
   margin-top: 20px;
+  display: block;
   border-collapse: collapse;
-  border-radius: 12px;
-  overflow: hidden;
+  border-radius: 10px;
+  overflow-x : auto;
+  white-space: nowrap;
 }
 
 th, td {
@@ -99,13 +107,25 @@ th, td {
   border-radius: 10px;
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 600px) {
   .container {
-    padding: 20px;
+    padding: 10px;
   }
-  h1 { font-size: 20px; }
-  p { font-size: 15px; }
-  input, button { font-size: 12px; padding: 8px; }
+  h1 { 
+    font-size: 20px;
+  }
+  p { 
+    font-size: 15px; 
+  }
+  table th,
+  table td {
+    font-size: 14px;
+    padding: 6px;
+  }
+  input, button { 
+    font-size: 12px; 
+    padding: 8px; 
+  }
 }
 
 .month {
@@ -117,6 +137,19 @@ th, td {
   }
 .out { 
   color: red; font-weight: 600; 
+}
+
+.form input,
+.form button {
+  width: 100%;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.type {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
 }
 
 
