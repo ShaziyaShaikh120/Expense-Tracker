@@ -4,52 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Expense Tracker</title>
+
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json">
-
 </head>
+
 <body>
   <div class="container">
     <h1>💰 Expense Tracker</h1>
-    <p>Track your daily expenses and stay on budget!</p>
+    <p>Track your daily expenses easily!</p>
 
     <div class="form">
       <input type="number" id="amount" placeholder="Enter amount">
-      <input type="text" id="category" placeholder="type Category">
+      <input type="text" id="category" placeholder="Type category">
 
       <input type="date" id="date">
 
       <div class="type">
-    <label>
-     <input type="radio" name="type" value="in" checked> + IN
-    </label>
-    <label>
-     <input type="radio" name="type" value="out"> - OUT
-    </label>
-    </div>
-
-    <div class="budget-section">
-  <h3>Set Your Budget: ₹ 
-    <input type="number" id="budgetInput" placeholder="Enter budget">
-    <button id="saveBudget">Save</button>
-  </h3>
-
-  <h3>Total IN: ₹ <span id="totalIn">0</span></h3>
-  <h3>Total OUT: ₹ <span id="totalOut">0</span></h3>
-  <h3>Balance: ₹ <span id="balance">0</span></h3>
-</div>
+        <label>
+          <input type="radio" name="type" value="in" checked> + IN
+        </label>
+        <label>
+          <input type="radio" name="type" value="out"> - OUT
+        </label>
+      </div>
 
       <button id="addExpense">Add Expense</button>
     </div>
 
     <h2>Total: ₹ <span id="total">0</span></h2>
-     
-    <div class="month">
-    <label>Select Month</label>
-    <input type="month" id="monthFilter">
 
-    <h3>Monthly Total: ₹ <span id="monthlyTotal">0</span></h3>
+    <div class="month">
+      <label>Select Month</label>
+      <input type="month" id="monthFilter">
+      <h3>Monthly Total: ₹ <span id="monthlyTotal">0</span></h3>
     </div>
 
     <table>
@@ -61,8 +50,11 @@
           <th>Action</th>
         </tr>
       </thead>
+
       <tbody id="expenseList"></tbody>
     </table>
+    <button id="clearAll" class="clear-all">🗑 Clear All</button>
+
   </div>
 
   <script src="script.js"></script>

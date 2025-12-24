@@ -9,38 +9,23 @@ const totalEl = document.getElementById("total");
 const monthFilter = document.getElementById("monthFilter");
 const monthlyTotalEl = document.getElementById("monthlyTotal");
 
-const budgetInput = document.getElementById("budgetInput");
-const saveBudgetBtn = document.getElementById("saveBudget");
-const totalInEl = document.getElementById("totalIn");
-const totalOutEl = document.getElementById("totalOut");
-const balanceEl = document.getElementById("balance");
+const clearAllBtn = document.getElementById("clearAll");
 
-let expenses = [];
+// Load from localStorage
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 let total = 0;
-let budget = 0;
+let editIndex = null;
 
-// Load saved budget from localStorage
-if (localStorage.getItem("budget")) {
-  budget = Number(localStorage.getItem("budget"));
-  budgetInput.value = budget;
-}
+// Initial calculation
+expenses.forEach(exp => total += exp.finalAmount);
+updateTotal();
+renderExpenses();
+updateMonthlyTotal();
 
-// Save budget manually
-saveBudgetBtn.addEventListener("click", () => {
-  const input = Number(budgetInput.value);
-  if (!input || input < 0) {
-    alert("Baby, valid budget daalo 😜");
-    return;
-  }
-  budget = input;
-  localStorage.setItem("budget", budget);
-  updateSummary();
-});
-
-// ➕➖ Add Expense
+// ➕➖ Add / Update Expense
 addBtn.addEventListener("click", () => {
   const amount = Number(amountInput.value);
-  const category = categoryInput.value;
+  const category = categoryInput.value.trim();
   const date = dateInput.value;
   const type = document.querySelector('input[name="type"]:checked').value;
 
@@ -59,8 +44,21 @@ addBtn.addEventListener("click", () => {
     type
   };
 
-  expenses.push(expense);
-  total += finalAmount;
+  // ✏️ EDIT MODE
+  if (editIndex !== null) {
+    total -= expenses[editIndex].finalAmount;
+    expenses[editIndex] = expense;
+    total += finalAmount;
+    editIndex = null;
+    addBtn.innerText = "Add Expense";
+  } 
+  // ➕ ADD MODE
+  else {
+    expenses.push(expense);
+    total += finalAmount;
+  }
+
+  localStorage.setItem("expenses", JSON.stringify(expenses));
 
   updateTotal();
   renderExpenses();
@@ -82,39 +80,55 @@ function renderExpenses() {
       <td class="${exp.type}">
         ${exp.type === "in" ? "+" : "-"}₹${exp.amount}
       </td>
-      <td>${exp.category}</td>
+      <td class="category-cell">${exp.category}</td>
       <td>${exp.date}</td>
       <td>
+        <button class="edit">✏️</button>
         <button class="delete">❌</button>
       </td>
     `;
 
+    // ❌ Delete
     tr.querySelector(".delete").addEventListener("click", () => {
       total -= exp.finalAmount;
       expenses.splice(index, 1);
+      localStorage.setItem("expenses", JSON.stringify(expenses));
       updateTotal();
       renderExpenses();
       updateMonthlyTotal();
+    });
+
+    // ✏️ Edit
+    tr.querySelector(".edit").addEventListener("click", () => {
+      amountInput.value = exp.amount;
+      categoryInput.value = exp.category;
+      dateInput.value = exp.date;
+      document.querySelector(`input[name="type"][value="${exp.type}"]`).checked = true;
+
+      editIndex = index;
+      addBtn.innerText = "Update Expense";
     });
 
     expenseList.appendChild(tr);
   });
 }
 
-// 💰 Update Total Balance
+// 🗑 Clear All
+clearAllBtn.addEventListener("click", () => {
+  if (!confirm("Are you sure? All expenses will be deleted 😢")) return;
+
+  expenses = [];
+  total = 0;
+  localStorage.removeItem("expenses");
+
+  updateTotal();
+  renderExpenses();
+  updateMonthlyTotal();
+});
+
+// 💰 Update Total
 function updateTotal() {
   totalEl.innerText = total;
-}
-
-// 💎 Update Summary (Total IN / OUT / Balance)
-function updateSummary() {
-  const totalIn = expenses.filter(e => e.type === "in").reduce((sum, e) => sum + e.amount, 0);
-  const totalOut = expenses.filter(e => e.type === "out").reduce((sum, e) => sum + e.amount, 0);
-  const balance = budget + totalIn - totalOut;
-
-  totalInEl.innerText = totalIn;
-  totalOutEl.innerText = totalOut;
-  balanceEl.innerText = balance;
 }
 
 // 📅 Monthly Total
@@ -125,7 +139,7 @@ function updateMonthlyTotal() {
   let monthlyTotal = 0;
 
   expenses.forEach(exp => {
-    if (exp.date.startsWith(selectedMonth)) {
+    if (selectedMonth && exp.date.startsWith(selectedMonth)) {
       monthlyTotal += exp.finalAmount;
     }
   });

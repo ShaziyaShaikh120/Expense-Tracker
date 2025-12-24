@@ -84,6 +84,7 @@ table {
   border-radius: 10px;
   overflow-x : auto;
   white-space: nowrap;
+  table-layout: auto;
 }
 
 th, td {
@@ -127,6 +128,7 @@ th, td {
     padding: 8px; 
   }
 }
+
 
 .month {
    margin-top: 15px;
